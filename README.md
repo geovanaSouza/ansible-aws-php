@@ -7,9 +7,13 @@ Requirements
 ------------
 
 O playbook foi homologado no Sistema Operacional Ubuntu 14.04
+
 O(s) servidor(es) deverá(ão) ter um disco de 10 Gb atachado
+
 O arquivo inventory/hosts_example deverá ser alterado para informações de acordo com informações dos servidores a serem configurados
+
 Copie a chave com permissão de acesso ssh ao servidor para o diretório keys/ ou altere o parâmetro ansible_ssh_private_key_file direcionando para a localização da chave
+
 O servidor de onde partirá o a configuração deverá possuir o aws CLI instalado e configurado
 
 Ansible Version
