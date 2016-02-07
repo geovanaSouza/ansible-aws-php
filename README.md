@@ -1,7 +1,7 @@
 Ansible PHP
 ===========
 
-Configura um servidor PHP
+Configura um servidor PHP em uma conta na Amazon AWS
 
 Requirements
 ------------
