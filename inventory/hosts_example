@@ -1,14 +1,20 @@
+[todos:children]
+php_server
+local
+
 [php_server]
 #Substituir IP_SERVER pelo ip do servidor a ser configurado
 IP_SERVER new_hostname=SV-DEVOPS-SB
 
+[local]
+localhost ansible_connection=local
+
 #Variaveis do grupo PHP
 [php_server:vars]
-###ALTERAR LOCALIZACAO CHAVE###
+#Substituir pelo localização da chave SSH
 ansible_ssh_private_key_file=keys/NotebookHome.pem
-zone_dns=minhaapp.com
-application_name_nginx=socialbase
 ansible_ssh_user=ubuntu
+ansible_become=true
 php_version=5.6.18+dfsg-1+deb.sury.org~trusty+1
 www_data_limits_soft=65535
 www_data_limits_hard=65535
@@ -20,6 +26,13 @@ max_request_fpm=500
 directory_nginx=/var/www
 directory_nginx_fs_type=xfs
 directory_nginx_fs_device=/dev/xvdf
-ansible_become=true
-vpc_id="vpc-123456"
-vpc_region=sa-east-1c
+
+[todos:vars]
+zone_dns=minhaapp.com
+application_name_nginx=socialbase
+
+[local:vars]
+#Substituir valores pelos da conta da Amazon
+access_key=XYZ
+secret_access_key=XYZ
+eip_public=12.345.678.90
