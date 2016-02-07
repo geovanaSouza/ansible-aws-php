@@ -1,0 +1,38 @@
+---
+- name: Instala package xfs
+  apt: name=xfsprogs state=latest
+
+- name: Criando partição
+  filesystem: fstype={{ fs_type }} dev={{ fs_device }}
+
+- name: Verifica se FileSystem já está montado
+  shell: "mount -l | grep {{ fs_device }} | grep {{ fs_directory }} | wc -l"
+  register: return_consulta_mount
+
+- name: Verifica se diretorio existe
+  stat: path={{ fs_directory }}
+  register: return_consulta_directory
+
+# Se o diretorio existe efetua backup para recuperar após montar a partição
+- name: Efetuando backup do diretorio
+  shell: cp -R {{ fs_directory }} {{ fs_directory }}_bkp
+  when: return_consulta_mount.stdout == "0" and return_consulta_directory.stat.exists
+
+#Apagando conteúdo do diretório após efetuar backup
+- name: Removendo conteúdo do diretório
+  shell: rm -rf {{ fs_directory }}/*
+  when: return_consulta_mount.stdout == "0" and return_consulta_directory.stat.exists
+
+#Cria diretorio caso não exista
+- name: Cria diretorio vazio
+  file: path={{ fs_directory }} state=directory
+  
+- name: Montando FileSystem
+  mount: fstype={{ fs_type }} name={{ fs_directory }} src={{ fs_device }} state=mounted
+
+- name: Voltando backup dos arquivos
+  shell: cp -R {{ fs_directory }}_bkp/* {{ fs_directory }}
+  when: return_consulta_mount.stdout == "0" and return_consulta_directory.stat.exists
+
+- name: Removendo diretorio de backup
+  file: path={{ fs_directory }}_bkp state=absent

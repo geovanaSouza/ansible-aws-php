@@ -1,0 +1,26 @@
+---
+- name: Criando diretório para certificados do nginx
+  file: path=/etc/nginx/ssl state=directory
+
+- name: Gerando certificado auto assinado
+  shell: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=BR/ST=SantaCatarina/L=Florianopolis/O=DEVOPS/CN={{ zone_dns }}" -keyout /etc/nginx/ssl/{{ zone_dns }}.key -out /etc/nginx/ssl/{{ zone_dns }}.crt
+
+- name: Configurando server nginx
+  template:
+    dest: "/etc/nginx/sites-available/{{ application_name_nginx }}"
+    src: template_nginx
+    backup: true
+
+- name: Habilitando novo server no nginx
+  file: src=/etc/nginx/sites-available/{{ application_name_nginx }} dest=/etc/nginx/sites-enabled/{{ application_name_nginx }} state=link
+
+- name: Desabilitando server default nginx
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: Copia phpinfo para servidor
+  template:
+    dest: "{{ directory_nginx }}/html/info.php"
+    owner: www-data
+    src: phpinfo.php
+    backup: true
+

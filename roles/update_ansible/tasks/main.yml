@@ -1,0 +1,9 @@
+---
+- name: Instala software properties
+  apt: name=software-properties-common state=latest
+
+- name: Adicionando repositorio com versao mais recente do Ansible
+  apt_repository: repo=ppa:ansible/ansible state=present update_cache=yes
+
+- name: Instala versão atualizada do Ansible
+  apt: name=ansible state=latest

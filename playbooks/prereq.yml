@@ -1,0 +1,6 @@
+---
+- name: Atualizando versao do Ansible
+  hosts: localhost
+  roles:
+  - update_ansible
+  sudo: true

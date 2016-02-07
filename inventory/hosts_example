@@ -1,0 +1,25 @@
+[php_server]
+#Substituir IP_SERVER pelo ip do servidor a ser configurado
+IP_SERVER new_hostname=SV-DEVOPS-SB
+
+#Variaveis do grupo PHP
+[php_server:vars]
+###ALTERAR LOCALIZACAO CHAVE###
+ansible_ssh_private_key_file=keys/NotebookHome.pem
+zone_dns=minhaapp.com
+application_name_nginx=socialbase
+ansible_ssh_user=ubuntu
+php_version=5.6.18+dfsg-1+deb.sury.org~trusty+1
+www_data_limits_soft=65535
+www_data_limits_hard=65535
+root_limits_soft=4096
+root_limits_hard=4096
+process_start_fpm=20
+max_process_fpm=60
+max_request_fpm=500
+directory_nginx=/var/www
+directory_nginx_fs_type=xfs
+directory_nginx_fs_device=/dev/xvdf
+ansible_become=true
+vpc_id="vpc-123456"
+vpc_region=sa-east-1c

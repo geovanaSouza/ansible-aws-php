@@ -1,0 +1,33 @@
+---
+- name: Alterando Hostname
+  hosts: php_server
+  roles:
+  - rename_hostname
+
+- name: Preparando hosts para php
+  hosts: php_server
+  roles:
+  - install_php
+  - { role: ulimit, user_limits: www-data, limits_soft: "{{ www_data_limits_soft }}", limits_hard: "{{ www_data_limits_hard }}"}
+  - { role: ulimit, user_limits: root, limits_soft: "{{ root_limits_soft }}", limits_hard: "{{ root_limits_hard }}"}
+
+- name: Configurando FileSystem Para arquivos nginx
+  hosts: php_server
+  roles:
+  - { role: make_filesystem, fs_type: "{{ directory_nginx_fs_type }}", fs_device: "{{ directory_nginx_fs_device }}", fs_directory: "{{ directory_nginx }}"}
+
+- name: Pubicando applicação
+  hosts: php_server
+  roles:
+  - public_site
+
+- name: Reiniciando nginx
+  hosts: php_server
+  tasks:
+  - service: name=nginx state=restarted enabled=yes
+
+- name: Configura DNS
+  hosts: localhost
+  roles:
+  - configura_DNS
+

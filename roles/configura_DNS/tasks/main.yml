@@ -1,0 +1,31 @@
+---
+- name: Instala pip
+  apt: name=python-pip state=latest
+  become: yes
+
+- name: Instalando dependências modulos pip
+  pip: name=boto state=latest
+  become: yes
+
+- name: Cria uma hosted zone
+  shell: aws route53 create-hosted-zone --name "{{ zone_dns }}" --caller-reference {{ ansible_date_time.date }}-{{ ansible_date_time.hour }}  --hosted-zone-config Comment="Zona criada para Processo Seletivo SocialBase"
+
+- name: Cria a healthcheck
+  route53_health_check:
+    state: present
+    fqdn: "{{ application_name_nginx }}.{{ zone_dns }}"
+    port: 80
+    type: HTTP
+    aws_access_key: "{{ access_key }}"
+    aws_secret_key: "{{ secret_access_key }}"
+
+- name: Configura DNS
+  route53:
+    command: create 
+    record: "{{ application_name_nginx }}.{{ zone_dns }}"
+    zone: "{{ zone_dns }}"
+    type: A
+    value: "{{ eip_public }}"
+    aws_access_key: "{{ access_key }}"
+    aws_secret_key: "{{ secret_access_key }}"
+

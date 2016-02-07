@@ -1,0 +1,17 @@
+packages_php:
+- package: php5={{ php_version }}
+  state: present
+- package: nginx
+  state: latest
+- package: php5-fpm={{ php_version }}
+  state: present
+
+pool_config:
+- properties: pm.start_servers
+  value: "{{ process_start_fpm }}"
+- properties: pm.max_children
+  value: "{{ max_process_fpm }}"
+- properties: pm.max_requests
+  value: "{{ max_request_fpm }}"
+- properties: pm.max_spare_servers
+  value: "{{ process_start_fpm }}"

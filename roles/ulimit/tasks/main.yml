@@ -1,0 +1,12 @@
+---
+- name: Incluindo limit para usuario
+  template:
+    dest: "/etc/security/limits.d/limits_{{ user_limits }}.conf"
+    src: limit.conf
+    backup: true
+
+- name: Include pam_limits.so
+  lineinfile:
+    dest: "/etc/pam.d/common-session"
+    line: "session required pam_limits.so"
+    state: present

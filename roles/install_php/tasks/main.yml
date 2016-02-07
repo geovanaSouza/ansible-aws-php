@@ -1,0 +1,30 @@
+---
+- name: Incluindo repositório ppa
+  apt_repository: repo='ppa:ondrej/php5-5.6' state=present update_cache=yes
+
+- name: Instalando pacotes SO
+  apt: name={{ item.package }} state={{ item.state }}
+  with_items: packages_php
+
+- name: Configurando pool php5-fpm
+  lineinfile:
+    dest: "/etc/php5/fpm/pool.d/www.conf"
+    regexp: '^{{ item.properties }} = .*$'
+    insertafter: "^(;){{ item.properties }} = .*$"
+    line: "{{ item.properties }} = {{ item.value }}"
+    state: present
+  with_items: pool_config
+
+- name: Habilitando OPcache
+  lineinfile:
+    dest: "/etc/php5/fpm/php.ini"
+    regexp: '^opcache.enable=.*$'
+    insertafter: '^(;)opcache.enable=.*$'
+    line: "opcache.enable=1"
+    state: present
+
+- name: Reiniciando php5-fpm
+  service: name=php5-fpm state=restarted enabled=yes
+
+- name: Desabilitando apache
+  service: name=apache2 state=stopped enabled=no
